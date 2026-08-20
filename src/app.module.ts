@@ -7,6 +7,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import databaseConfig from './config/database.config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { HealthModule } from './health/health.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
@@ -31,6 +32,7 @@ import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
     ]),
     UsersModule,
     AuthModule,
+    HealthModule,
   ],
   providers: [
     {

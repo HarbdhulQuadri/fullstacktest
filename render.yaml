@@ -11,10 +11,15 @@ services:
     region: oregon
     buildCommand: npm install && npm run build && cd client && npm install && npm run build
     startCommand: node dist/main
-    healthCheckPath: /api/users
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
+      # Render installs with NODE_ENV=production, which omits devDependencies.
+      # The build needs @nestjs/cli / typescript (and the client's vite / tsc),
+      # so force dev deps to be installed.
+      - key: NPM_CONFIG_PRODUCTION
+        value: 'false'
       - key: DB_TYPE
         value: postgres
       - key: DATABASE_URL
