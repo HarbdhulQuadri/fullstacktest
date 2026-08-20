@@ -6,17 +6,15 @@ import PersonalInfoStep from './steps/PersonalInfoStep';
 import ContactStep from './steps/ContactStep';
 import AddressStep from './steps/AddressStep';
 import AcademicsStep from './steps/AcademicsStep';
-import ResumePreviewStep from './steps/ResumePreviewStep';
 import ConfirmStep from './steps/ConfirmStep';
 
-const steps = ['Personal', 'Contact', 'Address', 'Education', 'Resume', 'Confirm'];
+const steps = ['Personal', 'Contact', 'Address', 'Education', 'Confirm'];
 
 const stepFields: Array<Array<keyof UserFormValues>> = [
   ['userInfo'],
   ['userContact'],
   ['userAddress'],
   ['userAcademics'],
-  [],
   [],
 ];
 
@@ -62,6 +60,7 @@ export default function WizardForm({
 
   const methods = useForm<UserFormValues>({
     mode: 'onTouched',
+    shouldFocusError: false,
     defaultValues: {
       ...BASE_DEFAULTS,
       ...defaultValues,
@@ -69,7 +68,9 @@ export default function WizardForm({
     } as UserFormValues,
   });
 
-  const [step, setStep] = useState(persisted ? persisted.step : 0);
+  const [step, setStep] = useState(
+    persisted ? Math.min(persisted.step, steps.length - 1) : 0,
+  );
   const isLast = step === steps.length - 1;
   const progress = (step / (steps.length - 1)) * 100;
 
@@ -115,16 +116,30 @@ export default function WizardForm({
 
   const prev = () => persistStep(Math.max(step - 1, 0));
 
-  const handleSubmit = methods.handleSubmit(async (data) => {
-    await onSubmit(data);
-    if (storageKey) {
-      try {
-        sessionStorage.removeItem(storageKey);
-      } catch {
-        /* ignore */
+  const onInvalid = (errors: Record<string, unknown>) => {
+    // Surface the earliest invalid step so the user isn't stuck on Confirm
+    // with an error hidden on a previous step.
+    for (let i = 0; i < stepFields.length; i++) {
+      if (stepFields[i].some((field) => errors[field])) {
+        setStep(i);
+        return;
       }
     }
-  });
+  };
+
+  const handleSubmit = methods.handleSubmit(
+    async (data) => {
+      await onSubmit(data);
+      if (storageKey) {
+        try {
+          sessionStorage.removeItem(storageKey);
+        } catch {
+          /* ignore */
+        }
+      }
+    },
+    onInvalid,
+  );
 
   return (
     <FormProvider {...methods}>
@@ -150,8 +165,7 @@ export default function WizardForm({
             {step === 1 && <ContactStep />}
             {step === 2 && <AddressStep />}
             {step === 3 && <AcademicsStep />}
-            {step === 4 && <ResumePreviewStep />}
-            {step === 5 && <ConfirmStep />}
+            {step === 4 && <ConfirmStep />}
           </div>
 
           <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-6">
