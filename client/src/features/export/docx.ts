@@ -5,15 +5,12 @@ import {
   Packer,
   Paragraph,
   TextRun,
-  Table,
-  TableRow,
-  TableCell,
-  ShadingType,
   BorderStyle,
   WidthType,
 } from 'docx';
+import { saveAs } from 'file-saver';
 
-const INDIGO = '312E81';
+const INDIGO = '4F46E5';
 const INDIGO_BAR = '6366F1';
 const LABEL = '475569';
 const VALUE = '1E293B';
@@ -23,12 +20,11 @@ const FAINT = '94A3B8';
 type RunOpts = { bold?: boolean; italics?: boolean; size?: number; color?: string };
 
 /**
- * DOCX mirrors the on-screen `ResumeTemplate` preview: same indigo header
- * band, uppercase indigo section titles, bold field labels and the education
- * list — so the exported document reads like the preview rather than plain text.
+ * DOCX mirrors the on-screen `ResumeTemplate` preview: dark name, indigo
+ * occupation, indigo uppercase section titles with an accent bar, and the same
+ * Contact / Address / Personal / Education content order.
  */
 export async function exportUserDocx(user: User): Promise<void> {
-  const { saveAs } = await import('file-saver');
   const v = userToFormValues(user);
 
   const run = (text: string, opts: RunOpts = {}) =>
@@ -40,40 +36,6 @@ export async function exportUserDocx(user: User): Promise<void> {
       size: opts.size,
     });
 
-  const header = new Table({
-    width: { size: 100, type: WidthType.PERCENTAGE },
-    rows: [
-      new TableRow({
-        children: [
-          new TableCell({
-            shading: { type: ShadingType.SOLID, fill: INDIGO, color: 'auto' },
-            margins: { top: 240, bottom: 240, left: 360, right: 360 },
-            children: [
-              new Paragraph({
-                children: [
-                  run(`${v.userInfo.firstName} ${v.userInfo.lastName}`, {
-                    bold: true,
-                    size: 36,
-                    color: 'FFFFFF',
-                  }),
-                ],
-              }),
-              new Paragraph({
-                children: [
-                  run(v.userInfo.occupation || '—', {
-                    italics: true,
-                    size: 20,
-                    color: 'C7D2FE',
-                  }),
-                ],
-              }),
-            ],
-          }),
-        ],
-      }),
-    ],
-  });
-
   const title = (text: string) =>
     new Paragraph({
       spacing: { before: 240, after: 120 },
@@ -83,10 +45,7 @@ export async function exportUserDocx(user: User): Promise<void> {
 
   const kv = (label: string, value?: string | null) =>
     new Paragraph({
-      children: [
-        run(`${label}: `, { bold: true, color: LABEL }),
-        run(value || '—', { color: VALUE }),
-      ],
+      children: [run(`${label}: `, { bold: true, color: LABEL }), run(value || '—', { color: VALUE })],
     });
 
   const line = (text?: string | null) =>
@@ -96,16 +55,12 @@ export async function exportUserDocx(user: User): Promise<void> {
     ? [new Paragraph({ children: [run('No education records.', { color: FAINT })] })]
     : v.userAcademics
         .map((a) => {
-          const paras = [
-            new Paragraph({ children: [run(a.schoolName, { bold: true, color: VALUE })] }),
-          ];
+          const paras = [new Paragraph({ children: [run(a.schoolName, { bold: true, color: VALUE })] })];
           const detail = [a.degree, a.fieldOfStudy].filter(Boolean).join(' · ');
           if (detail) paras.push(new Paragraph({ children: [run(detail, { color: MUTED })] }));
           const dates = [a.startDate, a.endDate].filter(Boolean).join(' — ');
           if (dates) paras.push(new Paragraph({ children: [run(dates, { color: FAINT })] }));
-          if (a.description) {
-            paras.push(new Paragraph({ children: [run(a.description, { color: LABEL })] }));
-          }
+          if (a.description) paras.push(new Paragraph({ children: [run(a.description, { color: LABEL })] }));
           return paras;
         })
         .flat();
@@ -114,7 +69,14 @@ export async function exportUserDocx(user: User): Promise<void> {
     sections: [
       {
         children: [
-          header,
+          new Paragraph({
+            children: [run(`${v.userInfo.firstName} ${v.userInfo.lastName}`, { bold: true, size: 32, color: '0F172A' })],
+          }),
+          new Paragraph({
+            spacing: { after: 200 },
+            children: [run(v.userInfo.occupation || '—', { italics: true, size: 22, color: INDIGO })],
+          }),
+
           title('Contact'),
           kv('Email', v.userContact.email),
           kv('Phone', v.userContact.phoneNumber),

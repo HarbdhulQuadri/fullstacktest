@@ -1,6 +1,5 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { Users, UserPlus, LogOut } from 'lucide-react';
-import { ToastProvider } from './ui/Toast';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { clearAuth } from '../features/auth/authSlice';
 import { setToken } from '../lib/http';
@@ -24,8 +23,7 @@ export default function Layout() {
   };
 
   return (
-    <ToastProvider>
-      <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50">
         <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
             <Link to="/users" className="flex items-center gap-2">
@@ -62,6 +60,5 @@ export default function Layout() {
           <Outlet />
         </main>
       </div>
-    </ToastProvider>
   );
 }

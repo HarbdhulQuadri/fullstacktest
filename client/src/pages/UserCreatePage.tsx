@@ -11,10 +11,12 @@ export default function UserCreatePage() {
   const { notify } = useToast();
 
   const onSubmit = (data: UserFormValues) => {
-    void dispatch(createUser(data)).then(() => {
-      notify('User created');
-      navigate('/users');
-    });
+    return dispatch(createUser(data))
+      .then(() => {
+        notify('User created');
+        navigate('/users');
+      })
+      .catch(() => notify('Failed to create user', 'error'));
   };
 
   return (

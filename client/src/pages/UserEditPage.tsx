@@ -26,11 +26,13 @@ export default function UserEditPage() {
   if (!current) return <p className="text-gray-500">User not found.</p>;
 
   const onSubmit = (data: UserFormValues) => {
-    if (!id) return;
-    void dispatch(updateUser({ id, data })).then(() => {
-      notify('User updated');
-      navigate(`/users/${id}`);
-    });
+    if (!id) return Promise.resolve();
+    return dispatch(updateUser({ id, data }))
+      .then(() => {
+        notify('User updated');
+        navigate(`/users/${id}`);
+      })
+      .catch(() => notify('Failed to update user', 'error'));
   };
 
   return (

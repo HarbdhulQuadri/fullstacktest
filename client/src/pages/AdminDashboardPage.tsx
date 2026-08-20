@@ -1,53 +1,88 @@
 import { useEffect, useState } from 'react';
-import { FileText, FileType, FileDown, Users } from 'lucide-react';
+import { FileText, FileType, FileDown, Users, Trash2 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { fetchUsers } from '../features/users/usersSlice';
+import { deleteUser, fetchUsers } from '../features/users/usersSlice';
 import { exportUserPdf } from '../features/export/pdf';
 import { exportUserDocx } from '../features/export/docx';
 import { useToast } from '../components/ui/Toast';
+import ConfirmModal from '../components/ui/ConfirmModal';
 import ResumeTemplate from '../components/wizard/ResumeTemplate';
 import { userToFormValues } from '../features/users/types';
 import type { User } from '../features/users/types';
+
+function TableSkeleton() {
+  return (
+    <div className="divide-y divide-slate-100">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="flex items-center gap-4 px-5 py-4">
+          <div className="h-4 w-40 animate-pulse rounded bg-slate-100" />
+          <div className="h-4 w-52 animate-pulse rounded bg-slate-100" />
+          <div className="h-4 w-24 animate-pulse rounded bg-slate-100" />
+          <div className="ml-auto flex gap-2">
+            <div className="h-8 w-16 animate-pulse rounded bg-slate-100" />
+            <div className="h-8 w-16 animate-pulse rounded bg-slate-100" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="flex flex-col items-center justify-center gap-3 px-6 py-16 text-center">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+        <Users className="h-6 w-6" />
+      </div>
+      <p className="text-sm font-medium text-slate-500">No users found</p>
+      <p className="text-xs text-slate-400">Submitted resumes will appear here.</p>
+    </div>
+  );
+}
 
 export default function AdminDashboardPage() {
   const dispatch = useAppDispatch();
   const { items, loading, error } = useAppSelector((s) => s.users);
   const { notify } = useToast();
   const [selected, setSelected] = useState<User | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<User | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     void dispatch(fetchUsers());
   }, [dispatch]);
 
+  const handleDelete = () => {
+    if (!pendingDelete) return;
+    setDeleting(true);
+    void dispatch(deleteUser(pendingDelete.id))
+      .then(() => {
+        notify(`${pendingDelete.firstName} ${pendingDelete.lastName} deleted`);
+        if (selected?.id === pendingDelete.id) setSelected(null);
+      })
+      .catch(() => notify('Failed to delete user', 'error'))
+      .finally(() => {
+        setDeleting(false);
+        setPendingDelete(null);
+      });
+  };
+
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-          Admin Dashboard
-        </h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Admin Dashboard</h1>
         <p className="text-sm text-slate-500">Review submissions and export records</p>
       </div>
 
       {error && (
-        <div className="card mb-4 border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
-          {error}
-        </div>
+        <div className="card mb-4 border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
       )}
 
       <div className="card overflow-hidden">
         {loading ? (
-          <div className="space-y-3 p-6">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-10 animate-pulse rounded-lg bg-slate-100" />
-            ))}
-          </div>
+          <TableSkeleton />
         ) : items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-3 px-6 py-16 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-              <Users className="h-6 w-6" />
-            </div>
-            <p className="text-sm text-slate-500">No submissions yet.</p>
-          </div>
+          <EmptyState />
         ) : (
           <table className="w-full text-sm">
             <thead>
@@ -55,7 +90,7 @@ export default function AdminDashboardPage() {
                 <th className="px-5 py-3 font-medium">Name</th>
                 <th className="px-5 py-3 font-medium">Email</th>
                 <th className="px-5 py-3 font-medium">Country</th>
-                <th className="px-5 py-3 text-right font-medium">Export</th>
+                <th className="px-5 py-3 text-right font-medium">Export / Delete</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -74,27 +109,34 @@ export default function AdminDashboardPage() {
                   <td className="px-5 py-3 text-slate-600">{u.address.country}</td>
                   <td className="px-5 py-3" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-end gap-2">
-                       <button
-                         onClick={() => {
-                           void exportUserPdf(u)
-                             .then(() => notify('PDF exported'))
-                             .catch(() => notify('PDF export failed'));
-                         }}
-                         className="btn-ghost px-3 py-1.5 text-rose-600 hover:bg-rose-50"
-                       >
-                         <FileText className="h-4 w-4" />
-                         PDF
-                       </button>
-                       <button
-                         onClick={() => {
-                           void exportUserDocx(u)
-                             .then(() => notify('DOCX exported'))
-                             .catch(() => notify('DOCX export failed'));
-                         }}
-                         className="btn-ghost px-3 py-1.5 text-blue-600 hover:bg-blue-50"
-                       >
+                      <button
+                        onClick={() =>
+                          void exportUserPdf(u)
+                            .then(() => notify('PDF exported'))
+                            .catch(() => notify('PDF export failed', 'error'))
+                        }
+                        className="btn-ghost px-3 py-1.5 text-rose-600 hover:bg-rose-50"
+                      >
+                        <FileText className="h-4 w-4" />
+                        PDF
+                      </button>
+                      <button
+                        onClick={() =>
+                          void exportUserDocx(u)
+                            .then(() => notify('DOCX exported'))
+                            .catch(() => notify('DOCX export failed', 'error'))
+                        }
+                        className="btn-ghost px-3 py-1.5 text-blue-600 hover:bg-blue-50"
+                      >
                         <FileType className="h-4 w-4" />
                         DOCX
+                      </button>
+                      <button
+                        onClick={() => setPendingDelete(u)}
+                        className="icon-btn hover:bg-rose-50 hover:text-rose-600"
+                        title="Delete"
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
                   </td>
@@ -113,22 +155,22 @@ export default function AdminDashboardPage() {
             </h2>
             <div className="flex gap-2">
               <button
-                onClick={() => {
+                onClick={() =>
                   void exportUserPdf(selected)
                     .then(() => notify('PDF exported'))
-                    .catch(() => notify('PDF export failed'));
-                }}
+                    .catch(() => notify('PDF export failed', 'error'))
+                }
                 className="btn-ghost text-rose-600 hover:bg-rose-50"
               >
                 <FileDown className="h-4 w-4" />
                 Download PDF
               </button>
               <button
-                onClick={() => {
+                onClick={() =>
                   void exportUserDocx(selected)
                     .then(() => notify('DOCX exported'))
-                    .catch(() => notify('DOCX export failed'));
-                }}
+                    .catch(() => notify('DOCX export failed', 'error'))
+                }
                 className="btn-ghost text-blue-600 hover:bg-blue-50"
               >
                 <FileDown className="h-4 w-4" />
@@ -139,6 +181,16 @@ export default function AdminDashboardPage() {
           <ResumeTemplate values={userToFormValues(selected)} />
         </div>
       )}
+
+      <ConfirmModal
+        open={!!pendingDelete}
+        title="Delete user"
+        message="Are you sure? This action cannot be undone."
+        confirmLabel="Delete"
+        loading={deleting}
+        onConfirm={handleDelete}
+        onCancel={() => setPendingDelete(null)}
+      />
     </div>
   );
 }

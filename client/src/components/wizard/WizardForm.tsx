@@ -7,6 +7,8 @@ import ContactStep from './steps/ContactStep';
 import AddressStep from './steps/AddressStep';
 import AcademicsStep from './steps/AcademicsStep';
 import ConfirmStep from './steps/ConfirmStep';
+import Stepper from './Stepper';
+import Spinner from '../ui/Spinner';
 
 const steps = ['Personal', 'Contact', 'Address', 'Education', 'Confirm'];
 
@@ -68,11 +70,14 @@ export default function WizardForm({
     } as UserFormValues,
   });
 
+  const {
+    formState: { isSubmitting },
+  } = methods;
+
   const [step, setStep] = useState(
     persisted ? Math.min(persisted.step, steps.length - 1) : 0,
   );
   const isLast = step === steps.length - 1;
-  const progress = (step / (steps.length - 1)) * 100;
 
   const stepRef = useRef(step);
   stepRef.current = step;
@@ -116,6 +121,11 @@ export default function WizardForm({
 
   const prev = () => persistStep(Math.max(step - 1, 0));
 
+  const goTo = (i: number) => {
+    // Only allow navigating back to a previous/current step.
+    if (i <= step) persistStep(i);
+  };
+
   const onInvalid = (errors: Record<string, unknown>) => {
     // Surface the earliest invalid step so the user isn't stuck on Confirm
     // with an error hidden on a previous step.
@@ -144,20 +154,7 @@ export default function WizardForm({
   return (
     <FormProvider {...methods}>
       <div className="mx-auto max-w-3xl">
-        <div className="mb-8">
-          <div className="mb-2 flex items-center justify-between text-sm">
-            <span className="font-medium text-slate-700">
-              Step {step + 1} of {steps.length}
-            </span>
-            <span className="text-slate-400">{steps[step]}</span>
-          </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
-            <div
-              className="h-full rounded-full bg-indigo-600 transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
+        <Stepper steps={steps} current={step} onStepClick={goTo} />
 
         <form onSubmit={handleSubmit} className="card p-6 sm:p-8">
           <div key={step} className="animate-fadeIn">
@@ -172,7 +169,7 @@ export default function WizardForm({
             <button
               type="button"
               onClick={prev}
-              disabled={step === 0}
+              disabled={step === 0 || isSubmitting}
               className="btn-ghost disabled:opacity-0"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -186,10 +183,20 @@ export default function WizardForm({
             ) : (
               <button
                 type="submit"
-                className="btn-primary bg-emerald-600 shadow-emerald-600/20 hover:bg-emerald-500"
+                disabled={isSubmitting}
+                className="btn-primary flex items-center gap-2 bg-emerald-600 shadow-emerald-600/20 hover:bg-emerald-500 disabled:opacity-70"
               >
-                <Check className="h-4 w-4" />
-                {submitLabel}
+                {isSubmitting ? (
+                  <>
+                    <Spinner />
+                    Saving…
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-4 w-4" />
+                    {submitLabel}
+                  </>
+                )}
               </button>
             )}
           </div>

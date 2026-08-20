@@ -1,10 +1,12 @@
-import { IsEmail, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateUserContactDto {
+  @IsNotEmpty()
   @IsEmail()
   @MaxLength(255)
   email: string;
 
+  @IsNotEmpty()
   @IsString()
   @MaxLength(30)
   phoneNumber: string;

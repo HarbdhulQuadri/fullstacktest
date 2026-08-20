@@ -1,6 +1,7 @@
-import { IsDateString, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateUserAcademicDto {
+  @IsNotEmpty()
   @IsString()
   @MaxLength(255)
   schoolName: string;

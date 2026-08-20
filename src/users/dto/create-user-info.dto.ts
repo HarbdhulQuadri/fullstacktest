@@ -1,4 +1,4 @@
-import { IsDateString, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateUserInfoDto {
   @IsOptional()
@@ -6,10 +6,12 @@ export class CreateUserInfoDto {
   @MaxLength(512)
   profilePhoto?: string | null;
 
+  @IsNotEmpty()
   @IsString()
   @MaxLength(100)
   firstName: string;
 
+  @IsNotEmpty()
   @IsString()
   @MaxLength(100)
   lastName: string;
@@ -22,6 +24,7 @@ export class CreateUserInfoDto {
   @MaxLength(100)
   occupation?: string | null;
 
+  @IsNotEmpty()
   @IsString()
   @MaxLength(20)
   gender: string;
