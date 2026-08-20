@@ -1,6 +1,8 @@
 import { registerAs } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { join } from 'path';
+import { InitSchema1787228547499 } from '../migrations/1787228547499-InitSchema';
+import { AddTimestampDefaults1787229000000 } from '../migrations/1787229000000-AddTimestampDefaults';
 
 const environment = (process.env.NODE_ENV || 'development').toLowerCase();
 const isProd = environment === 'production';
@@ -29,7 +31,7 @@ export default registerAs('database', (): TypeOrmModuleOptions => {
     synchronize,
     migrationsRun,
     migrationsTableName: 'migrations',
-    migrations: [join(__dirname, '..', 'migrations', '*.{ts,js}')],
+    migrations: [InitSchema1787228547499, AddTimestampDefaults1787229000000],
     logging,
   };
 
