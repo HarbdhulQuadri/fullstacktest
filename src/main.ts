@@ -29,7 +29,21 @@ function resolveClientDist(): string {
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.use(helmet());
+  // @react-pdf/renderer bundles a WebAssembly layout engine (Yoga) that must
+  // be instantiated in the browser, which violates the default CSP
+  // (`script-src 'self'`). Allow `wasm-unsafe-eval` so PDF export works, and
+  // permit https images so external profile photos render in the PDF.
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          scriptSrc: ["'self'", "'wasm-unsafe-eval'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+        },
+      },
+    }),
+  );
   app.setGlobalPrefix('api');
 
   app.enableCors({
