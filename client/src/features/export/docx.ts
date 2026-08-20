@@ -1,6 +1,12 @@
 import type { User } from '../users/types';
 import { userToFormValues } from '../users/types';
 
+/**
+ * DOCX content mirrors the `ResumeTemplate` preview: same section order and
+ * labels (Contact, Address, Personal, Education). A Word document can't be a
+ * pixel-perfect copy of the styled HTML preview, but the exported content now
+ * matches what the user sees.
+ */
 export async function exportUserDocx(user: User): Promise<void> {
   const [{ Document, Packer, Paragraph, TextRun, HeadingLevel }, { saveAs }] =
     await Promise.all([import('docx'), import('file-saver')]);
@@ -12,7 +18,10 @@ export async function exportUserDocx(user: User): Promise<void> {
       children: [new TextRun({ text, color: '312E81' })],
     });
 
-  const kv = (label: string, value: string) =>
+  const line = (text?: string | null) =>
+    new Paragraph({ children: [new TextRun({ text: text || '' })] });
+
+  const kv = (label: string, value?: string | null) =>
     new Paragraph({
       children: [
         new TextRun({ text: `${label}: `, bold: true }),
@@ -29,36 +38,43 @@ export async function exportUserDocx(user: User): Promise<void> {
     new Paragraph({
       children: [new TextRun({ text: v.userInfo.occupation || '—', italics: true })],
     }),
-    heading('Personal'),
-    kv('Date of Birth', v.userInfo.dob),
-    kv('Gender', v.userInfo.gender),
+
     heading('Contact'),
     kv('Email', v.userContact.email),
     kv('Phone', v.userContact.phoneNumber),
-    kv('Fax', v.userContact.fax ?? ''),
-    kv('LinkedIn', v.userContact.linkedInUrl ?? ''),
+    ...(v.userContact.fax ? [kv('Fax', v.userContact.fax)] : []),
+    ...(v.userContact.linkedInUrl ? [kv('LinkedIn', v.userContact.linkedInUrl)] : []),
+
     heading('Address'),
-    kv('Street', v.userAddress.address),
-    kv('City', v.userAddress.city),
-    kv('State', v.userAddress.state),
-    kv('Country', v.userAddress.country),
-    kv('Zip Code', v.userAddress.zipCode),
+    line(v.userAddress.address),
+    line(`${v.userAddress.city}, ${v.userAddress.state} ${v.userAddress.zipCode}`),
+    line(v.userAddress.country),
+
+    heading('Personal'),
+    kv('DOB', v.userInfo.dob),
+    kv('Gender', v.userInfo.gender),
+
     heading('Education'),
-    ...v.userAcademics.map(
-      (a) =>
-        new Paragraph({
-          children: [
-            new TextRun({ text: a.schoolName, bold: true }),
-            ...(a.degree || a.fieldOfStudy
-              ? [
-                  new TextRun({
-                    text: ` — ${[a.degree, a.fieldOfStudy].filter(Boolean).join(' · ')}`,
-                  }),
-                ]
-              : []),
-          ],
-        }),
-    ),
+    ...(v.userAcademics.length === 0
+      ? [line('No education records.')]
+      : v.userAcademics
+          .map((a) => {
+            const runs = [new TextRun({ text: a.schoolName, bold: true })];
+            const detail = [a.degree, a.fieldOfStudy].filter(Boolean).join(' · ');
+            if (detail) runs.push(new TextRun({ text: ` — ${detail}` }));
+            const paras = [new Paragraph({ children: runs })];
+            const dates = [a.startDate, a.endDate].filter(Boolean).join(' — ');
+            if (dates) {
+              paras.push(
+                new Paragraph({ children: [new TextRun({ text: dates, color: '808080' })] }),
+              );
+            }
+            if (a.description) {
+              paras.push(new Paragraph({ children: [new TextRun({ text: a.description })] }));
+            }
+            return paras;
+          })
+          .flat()),
   ];
 
   const doc = new Document({ sections: [{ children }] });

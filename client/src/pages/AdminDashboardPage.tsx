@@ -74,22 +74,25 @@ export default function AdminDashboardPage() {
                   <td className="px-5 py-3 text-slate-600">{u.address.country}</td>
                   <td className="px-5 py-3" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => {
-                          exportUserPdf(u);
-                          notify('PDF exported');
-                        }}
-                        className="btn-ghost px-3 py-1.5 text-rose-600 hover:bg-rose-50"
-                      >
-                        <FileText className="h-4 w-4" />
-                        PDF
-                      </button>
-                      <button
-                        onClick={() => {
-                          void exportUserDocx(u).then(() => notify('DOCX exported'));
-                        }}
-                        className="btn-ghost px-3 py-1.5 text-blue-600 hover:bg-blue-50"
-                      >
+                       <button
+                         onClick={() => {
+                           void exportUserPdf(u)
+                             .then(() => notify('PDF exported'))
+                             .catch(() => notify('PDF export failed'));
+                         }}
+                         className="btn-ghost px-3 py-1.5 text-rose-600 hover:bg-rose-50"
+                       >
+                         <FileText className="h-4 w-4" />
+                         PDF
+                       </button>
+                       <button
+                         onClick={() => {
+                           void exportUserDocx(u)
+                             .then(() => notify('DOCX exported'))
+                             .catch(() => notify('DOCX export failed'));
+                         }}
+                         className="btn-ghost px-3 py-1.5 text-blue-600 hover:bg-blue-50"
+                       >
                         <FileType className="h-4 w-4" />
                         DOCX
                       </button>
@@ -111,8 +114,9 @@ export default function AdminDashboardPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => {
-                  exportUserPdf(selected);
-                  notify('PDF exported');
+                  void exportUserPdf(selected)
+                    .then(() => notify('PDF exported'))
+                    .catch(() => notify('PDF export failed'));
                 }}
                 className="btn-ghost text-rose-600 hover:bg-rose-50"
               >
@@ -121,7 +125,9 @@ export default function AdminDashboardPage() {
               </button>
               <button
                 onClick={() => {
-                  void exportUserDocx(selected).then(() => notify('DOCX exported'));
+                  void exportUserDocx(selected)
+                    .then(() => notify('DOCX exported'))
+                    .catch(() => notify('DOCX export failed'));
                 }}
                 className="btn-ghost text-blue-600 hover:bg-blue-50"
               >
