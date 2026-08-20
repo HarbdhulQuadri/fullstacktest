@@ -16,7 +16,7 @@ export default function UserManagementPage() {
   );
 
   useEffect(() => {
-    void dispatch(fetchUsers());
+    void dispatch(fetchUsers({ page: 1, limit: 50 }));
   }, [dispatch]);
 
   const confirmDelete = () => {
