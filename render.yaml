@@ -1,7 +1,7 @@
 # Render deployment blueprint (free tier).
 # One Web Service runs Nest (serving the built frontend from the same origin)
-# plus a free PostgreSQL database. Set ADMIN_API_KEY in the Render dashboard
-# (leave blank to keep the API open for a public demo).
+# plus a free PostgreSQL database. Set JWT_SECRET and the admin seed credentials
+# in the Render dashboard before first deploy.
 
 services:
   - type: web
@@ -29,7 +29,13 @@ services:
         value: '60'
       - key: CORS_ORIGINS
         sync: false
-      - key: ADMIN_API_KEY
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        sync: false
+      - key: ADMIN_SEED_EMAIL
+        sync: false
+      - key: ADMIN_SEED_PASSWORD
         sync: false
 
 databases:

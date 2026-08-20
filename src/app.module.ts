@@ -6,8 +6,9 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import databaseConfig from './config/database.config';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
-import { ApiKeyGuard } from './common/guards/api-key.guard';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ApiKeyGuard } from './common/guards/api-key.guard';
       },
     ]),
     UsersModule,
+    AuthModule,
   ],
   providers: [
     {
@@ -41,7 +43,7 @@ import { ApiKeyGuard } from './common/guards/api-key.guard';
     },
     {
       provide: APP_GUARD,
-      useClass: ApiKeyGuard,
+      useClass: JwtAuthGuard,
     },
   ],
 })

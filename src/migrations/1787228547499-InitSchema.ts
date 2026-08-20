@@ -20,6 +20,20 @@ export class InitSchema1787228547499 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
+        name: 'AdminUser',
+        columns: [
+          new TableColumn({ name: 'id', type: 'uuid', isPrimary: true, isGenerated: true, generationStrategy: 'uuid' }),
+          new TableColumn({ name: 'email', type: 'varchar', length: '255', isNullable: false }),
+          new TableColumn({ name: 'passwordHash', type: 'varchar', isNullable: false }),
+          new TableColumn({ name: 'createdAt', type: 'timestamp', isNullable: false }),
+        ],
+        uniques: [new TableUnique({ name: 'UQ_admin_email', columnNames: ['email'] })],
+      }),
+      true,
+    );
+
+    await queryRunner.createTable(
+      new Table({
         name: 'UserContactTB',
         columns: [
           new TableColumn({ name: 'id', type: 'uuid', isPrimary: true, isGenerated: true, generationStrategy: 'uuid' }),
@@ -117,5 +131,6 @@ export class InitSchema1787228547499 implements MigrationInterface {
     await queryRunner.dropTable('UserAcademicsTB');
     await queryRunner.dropTable('UserAddressTB');
     await queryRunner.dropTable('UserContactTB');
+    await queryRunner.dropTable('AdminUser');
   }
 }

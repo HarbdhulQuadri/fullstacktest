@@ -38,6 +38,7 @@ const validPayload = {
 
 describe('Users API (e2e)', () => {
   let app: INestApplication;
+  let authToken: string;
 
   beforeAll(async () => {
     if (fs.existsSync(TEST_SQLITE)) fs.unlinkSync(TEST_SQLITE);
@@ -57,6 +58,17 @@ describe('Users API (e2e)', () => {
       }),
     );
     await app.init();
+
+    const loginRes = await request(app.getHttpServer())
+      .post('/api/auth/login')
+      .send({
+        email: process.env.ADMIN_SEED_EMAIL,
+        password: process.env.ADMIN_SEED_PASSWORD,
+      })
+      .expect(201);
+
+    authToken = loginRes.body.access_token;
+    expect(authToken).toBeDefined();
   });
 
   afterAll(async () => {
@@ -64,14 +76,26 @@ describe('Users API (e2e)', () => {
     if (fs.existsSync(TEST_SQLITE)) fs.unlinkSync(TEST_SQLITE);
   });
 
+  const authed = (): Record<string, string> => ({
+    Authorization: `Bearer ${authToken}`,
+  });
+
   const countUsers = async (): Promise<number> => {
-    const res = await request(app.getHttpServer()).get('/api/users').expect(200);
+    const res = await request(app.getHttpServer())
+      .get('/api/users')
+      .set(authed())
+      .expect(200);
     return res.body.length;
   };
+
+  it('rejects unauthenticated requests with 401', async () => {
+    await request(app.getHttpServer()).get('/api/users').expect(HttpStatus.UNAUTHORIZED);
+  });
 
   it('persists all four tables on a successful create (atomic happy path)', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/users')
+      .set(authed())
       .send(validPayload)
       .expect(201);
 
@@ -79,7 +103,10 @@ describe('Users API (e2e)', () => {
     expect(res.body.contact.email).toBe(validPayload.userContact.email);
     expect(res.body.academics).toHaveLength(validPayload.userAcademics.length);
 
-    const list = await request(app.getHttpServer()).get('/api/users').expect(200);
+    const list = await request(app.getHttpServer())
+      .get('/api/users')
+      .set(authed())
+      .expect(200);
     expect(list.body).toHaveLength(1);
   });
 
@@ -91,6 +118,7 @@ describe('Users API (e2e)', () => {
 
     const res = await request(app.getHttpServer())
       .post('/api/users')
+      .set(authed())
       .send(invalid)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY);
 
@@ -111,6 +139,7 @@ describe('Users API (e2e)', () => {
 
     await request(app.getHttpServer())
       .post('/api/users')
+      .set(authed())
       .send(invalidAcademics)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY);
 
@@ -123,6 +152,7 @@ describe('Users API (e2e)', () => {
 
     await request(app.getHttpServer())
       .post('/api/users')
+      .set(authed())
       .send({
         ...validPayload,
         userInfo: { ...validPayload.userInfo, firstName: 'First' },
@@ -134,6 +164,7 @@ describe('Users API (e2e)', () => {
 
     const res = await request(app.getHttpServer())
       .post('/api/users')
+      .set(authed())
       .send({
         ...validPayload,
         userInfo: { ...validPayload.userInfo, firstName: 'Second' },

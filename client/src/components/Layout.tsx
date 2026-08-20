@@ -1,6 +1,9 @@
-import { Link, NavLink, Outlet } from 'react-router-dom';
-import { Users, UserPlus } from 'lucide-react';
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Users, UserPlus, LogOut } from 'lucide-react';
 import { ToastProvider } from './ui/Toast';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { clearAuth } from '../features/auth/authSlice';
+import { setToken } from '../lib/http';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `rounded-lg px-3 py-2 text-sm font-medium transition ${
@@ -10,6 +13,16 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   }`;
 
 export default function Layout() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const email = useAppSelector((s) => s.auth.email);
+
+  const handleLogout = () => {
+    setToken(null);
+    dispatch(clearAuth());
+    navigate('/login', { replace: true });
+  };
+
   return (
     <ToastProvider>
       <div className="min-h-screen bg-slate-50">
@@ -34,6 +47,14 @@ export default function Layout() {
                 <UserPlus className="h-4 w-4" />
                 New User
               </Link>
+              {email && (
+                <span className="ml-3 hidden text-sm text-slate-500 sm:inline">
+                  {email}
+                </span>
+              )}
+              <button onClick={handleLogout} className="icon-btn ml-2" title="Sign out">
+                <LogOut className="h-4 w-4" />
+              </button>
             </nav>
           </div>
         </header>
