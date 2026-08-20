@@ -47,7 +47,12 @@ export default registerAs('database', (): TypeOrmModuleOptions => {
       ...common,
       type: 'postgres',
       url: databaseUrl,
-      ssl: toBool(process.env.DB_SSL, databaseUrl.includes('render.com') || databaseUrl.includes('rds.amazonaws.com'))
+      ssl: toBool(
+        process.env.DB_SSL,
+        databaseUrl.includes('render.com') ||
+          databaseUrl.includes('rds.amazonaws.com') ||
+          databaseUrl.includes('neon.tech'),
+      )
         ? { rejectUnauthorized: false }
         : false,
     } as TypeOrmModuleOptions;
