@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -22,8 +23,13 @@ export class UsersController {
   }
 
   @Get()
-  findAll(): Promise<UserInfoTB[]> {
-    return this.usersService.findAll();
+  findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ): Promise<{ data: UserInfoTB[]; total: number; page: number; limit: number }> {
+    const pageNum = page ? parseInt(page, 10) : 1;
+    const limitNum = limit ? parseInt(limit, 10) : 50;
+    return this.usersService.findAll(pageNum, limitNum);
   }
 
   @Get(':id')

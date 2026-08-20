@@ -47,7 +47,7 @@ export default function UserManagementPage() {
         </div>
       )}
 
-      <div className="card overflow-hidden">
+      <div className="card overflow-x-auto">
         {loading ? (
           <div className="space-y-3 p-6">
             {[...Array(4)].map((_, i) => (
@@ -66,7 +66,8 @@ export default function UserManagementPage() {
             </Link>
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="min-w-[800px]">
+            <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50/60 text-left text-xs uppercase tracking-wider text-slate-400">
                 <th className="px-5 py-3 font-medium">Name</th>
@@ -114,6 +115,7 @@ export default function UserManagementPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

@@ -4,6 +4,9 @@ import type { User, UserFormValues } from './types';
 
 interface UsersState {
   items: User[];
+  total: number;
+  page: number;
+  limit: number;
   current: User | null;
   loading: boolean;
   error: string | null;
@@ -11,12 +14,18 @@ interface UsersState {
 
 const initialState: UsersState = {
   items: [],
+  total: 0,
+  page: 1,
+  limit: 50,
   current: null,
   loading: false,
   error: null,
 };
 
-export const fetchUsers = createAsyncThunk('users/fetchAll', () => usersApi.list());
+export const fetchUsers = createAsyncThunk(
+  'users/fetchAll',
+  ({ page, limit }: { page?: number; limit?: number } = {}) => usersApi.list(page, limit)
+);
 export const fetchUser = createAsyncThunk('users/fetchOne', (id: string) => usersApi.get(id));
 export const createUser = createAsyncThunk('users/create', (data: UserFormValues) =>
   usersApi.create(data),
@@ -46,7 +55,10 @@ const usersSlice = createSlice({
       })
       .addCase(fetchUsers.fulfilled, (s, a) => {
         s.loading = false;
-        s.items = a.payload;
+        s.items = a.payload.data;
+        s.total = a.payload.total;
+        s.page = a.payload.page;
+        s.limit = a.payload.limit;
       })
       .addCase(fetchUsers.rejected, (s, a) => {
         s.loading = false;

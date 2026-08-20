@@ -55,6 +55,13 @@ export interface User {
   updatedAt?: string;
 }
 
+export interface PaginatedUsers {
+  data: User[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 export type UserFormValuesPayload = UserFormValues;
 
 /** Convert empty optional strings to null for optional backend fields. */

@@ -1,9 +1,9 @@
-import type { User, UserFormValues, UserFormValuesPayload } from './types';
+import type { User, UserFormValues, UserFormValuesPayload, PaginatedUsers } from './types';
 import { toApiPayload } from './types';
 import { apiFetch } from '../../lib/http';
 
 export const usersApi = {
-  list: () => apiFetch<User[]>('/users'),
+  list: (page = 1, limit = 50) => apiFetch<PaginatedUsers>(`/users?page=${page}&limit=${limit}`),
   get: (id: string) => apiFetch<User>(`/users/${id}`),
   create: (data: UserFormValuesPayload) =>
     apiFetch<User>('/users', {

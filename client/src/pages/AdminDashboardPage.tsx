@@ -42,15 +42,19 @@ function EmptyState() {
 
 export default function AdminDashboardPage() {
   const dispatch = useAppDispatch();
-  const { items, loading, error } = useAppSelector((s) => s.users);
+  const { items, loading, error, page, total, limit } = useAppSelector((s) => s.users);
   const { notify } = useToast();
   const [selected, setSelected] = useState<User | null>(null);
   const [pendingDelete, setPendingDelete] = useState<User | null>(null);
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    void dispatch(fetchUsers());
+    void dispatch(fetchUsers({ page: 1, limit: 10 }));
   }, [dispatch]);
+
+  const handlePageChange = (newPage: number) => {
+    void dispatch(fetchUsers({ page: newPage, limit: 10 }));
+  };
 
   const handleDelete = () => {
     if (!pendingDelete) return;
@@ -78,13 +82,14 @@ export default function AdminDashboardPage() {
         <div className="card mb-4 border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
       )}
 
-      <div className="card overflow-hidden">
+      <div className="card overflow-x-auto">
         {loading ? (
           <TableSkeleton />
         ) : items.length === 0 ? (
           <EmptyState />
         ) : (
-          <table className="w-full text-sm">
+          <div className="min-w-[800px]">
+            <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50/60 text-left text-xs uppercase tracking-wider text-slate-400">
                 <th className="px-5 py-3 font-medium">Name</th>
@@ -148,6 +153,30 @@ export default function AdminDashboardPage() {
               ))}
             </tbody>
           </table>
+          </div>
+        )}
+        {!loading && items.length > 0 && (
+          <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3">
+            <span className="text-sm text-slate-500">
+              Showing {(page - 1) * limit + 1} to {Math.min(page * limit, total)} of {total} users
+            </span>
+            <div className="flex gap-2">
+              <button
+                disabled={page <= 1}
+                onClick={() => handlePageChange(page - 1)}
+                className="btn-ghost disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <button
+                disabled={page * limit >= total}
+                onClick={() => handlePageChange(page + 1)}
+                className="btn-ghost disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          </div>
         )}
       </div>
 
