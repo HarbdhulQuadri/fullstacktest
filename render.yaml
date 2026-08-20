@@ -9,6 +9,7 @@ services:
     runtime: node
     plan: free
     region: oregon
+    nodeVersion: '20'
     buildCommand: npm install && npm run build && cd client && npm install && npm run build
     startCommand: node dist/main
     healthCheckPath: /api/health
