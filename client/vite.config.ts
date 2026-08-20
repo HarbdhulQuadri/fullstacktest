@@ -9,7 +9,7 @@ export default defineConfig({
     // such as `process` and `Buffer`. Vite's production build strips these,
     // which made the lazy-loaded PDF chunk throw at runtime. Polyfill them.
     nodePolyfills({
-      globals: { Buffer: true, process: true },
+      globals: { Buffer: true, process: true, global: true },
     }),
   ],
   server: {

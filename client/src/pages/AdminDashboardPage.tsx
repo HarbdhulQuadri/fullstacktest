@@ -113,7 +113,9 @@ export default function AdminDashboardPage() {
                         onClick={() =>
                           void exportUserPdf(u)
                             .then(() => notify('PDF exported'))
-                            .catch(() => notify('PDF export failed', 'error'))
+                            .catch((err: unknown) =>
+                              notify(err instanceof Error ? err.message : 'PDF export failed', 'error'),
+                            )
                         }
                         className="btn-ghost px-3 py-1.5 text-rose-600 hover:bg-rose-50"
                       >
@@ -124,7 +126,9 @@ export default function AdminDashboardPage() {
                         onClick={() =>
                           void exportUserDocx(u)
                             .then(() => notify('DOCX exported'))
-                            .catch(() => notify('DOCX export failed', 'error'))
+                            .catch((err: unknown) =>
+                              notify(err instanceof Error ? err.message : 'DOCX export failed', 'error'),
+                            )
                         }
                         className="btn-ghost px-3 py-1.5 text-blue-600 hover:bg-blue-50"
                       >
@@ -158,7 +162,9 @@ export default function AdminDashboardPage() {
                 onClick={() =>
                   void exportUserPdf(selected)
                     .then(() => notify('PDF exported'))
-                    .catch(() => notify('PDF export failed', 'error'))
+                    .catch((err: unknown) =>
+                      notify(err instanceof Error ? err.message : 'PDF export failed', 'error'),
+                    )
                 }
                 className="btn-ghost text-rose-600 hover:bg-rose-50"
               >
@@ -169,7 +175,9 @@ export default function AdminDashboardPage() {
                 onClick={() =>
                   void exportUserDocx(selected)
                     .then(() => notify('DOCX exported'))
-                    .catch(() => notify('DOCX export failed', 'error'))
+                    .catch((err: unknown) =>
+                      notify(err instanceof Error ? err.message : 'DOCX export failed', 'error'),
+                    )
                 }
                 className="btn-ghost text-blue-600 hover:bg-blue-50"
               >
