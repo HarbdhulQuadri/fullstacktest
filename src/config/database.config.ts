@@ -41,7 +41,7 @@ export default registerAs('database', (): TypeOrmModuleOptions => {
     } as TypeOrmModuleOptions;
   }
 
-  const databaseUrl = process.env.DATABASE_URL;
+  const databaseUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL;
   if (databaseUrl) {
     return {
       ...common,
