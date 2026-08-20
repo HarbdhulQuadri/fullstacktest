@@ -1,0 +1,39 @@
+# Render deployment blueprint (free tier).
+# One Web Service runs Nest (serving the built frontend from the same origin)
+# plus a free PostgreSQL database. Set ADMIN_API_KEY in the Render dashboard
+# (leave blank to keep the API open for a public demo).
+
+services:
+  - type: web
+    name: fullstacktest
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install && npm run build && cd client && npm install && npm run build
+    startCommand: node dist/main
+    healthCheckPath: /api/users
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_TYPE
+        value: postgres
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fullstacktest-db
+          property: connectionString
+      - key: DB_SYNCHRONIZE
+        value: 'false'
+      - key: DB_MIGRATIONS_RUN
+        value: 'true'
+      - key: RATE_LIMIT
+        value: '60'
+      - key: CORS_ORIGINS
+        sync: false
+      - key: ADMIN_API_KEY
+        sync: false
+
+databases:
+  - name: fullstacktest-db
+    plan: free
+    databaseName: fullstacktest
+    user: fullstacktest
