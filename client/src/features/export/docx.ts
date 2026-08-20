@@ -7,6 +7,10 @@ import {
   TextRun,
   BorderStyle,
   WidthType,
+  Table,
+  TableRow,
+  TableCell,
+  TableBorders,
 } from 'docx';
 import { saveAs } from 'file-saver';
 
@@ -40,58 +44,98 @@ export async function exportUserDocx(user: User): Promise<void> {
     new Paragraph({
       spacing: { before: 240, after: 120 },
       border: { left: { style: BorderStyle.SINGLE, size: 18, color: INDIGO_BAR, space: 80 } },
-      children: [run(text.toUpperCase(), { bold: true, color: INDIGO, size: 20 })],
+      children: [run(text.toUpperCase(), { bold: true, color: INDIGO, size: 16 })],
     });
 
   const kv = (label: string, value?: string | null) =>
     new Paragraph({
-      children: [run(`${label}: `, { bold: true, color: LABEL }), run(value || '—', { color: VALUE })],
+      spacing: { after: 80 },
+      children: [
+        run(`${label}: `, { bold: true, color: LABEL, size: 20 }),
+        run(value || '—', { color: VALUE, size: 20 }),
+      ],
     });
 
   const line = (text?: string | null) =>
-    new Paragraph({ children: [run(text || '', { color: MUTED })] });
+    new Paragraph({
+      spacing: { after: 60 },
+      children: [run(text || '', { color: MUTED, size: 20 })],
+    });
 
   const education = v.userAcademics.length === 0
-    ? [new Paragraph({ children: [run('No education records.', { color: FAINT })] })]
+    ? [new Paragraph({ children: [run('No education records.', { color: FAINT, size: 20 })] })]
     : v.userAcademics
         .map((a) => {
-          const paras = [new Paragraph({ children: [run(a.schoolName, { bold: true, color: VALUE })] })];
+          const paras = [
+            new Paragraph({
+              spacing: { before: 120, after: 40 },
+              children: [run(a.schoolName, { bold: true, color: VALUE, size: 22 })],
+            }),
+          ];
           const detail = [a.degree, a.fieldOfStudy].filter(Boolean).join(' · ');
-          if (detail) paras.push(new Paragraph({ children: [run(detail, { color: MUTED })] }));
+          if (detail) paras.push(new Paragraph({ spacing: { after: 40 }, children: [run(detail, { color: MUTED, size: 20 })] }));
           const dates = [a.startDate, a.endDate].filter(Boolean).join(' — ');
-          if (dates) paras.push(new Paragraph({ children: [run(dates, { color: FAINT })] }));
-          if (a.description) paras.push(new Paragraph({ children: [run(a.description, { color: LABEL })] }));
+          if (dates) paras.push(new Paragraph({ spacing: { after: 40 }, children: [run(dates, { color: FAINT, size: 18 })] }));
+          if (a.description) paras.push(new Paragraph({ spacing: { after: 80 }, children: [run(a.description, { color: LABEL, size: 20 })] }));
           return paras;
         })
         .flat();
 
+  // Create a 2-column table for the middle sections (Contact vs Address/Personal)
+  const layoutTable = new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    borders: TableBorders.NONE,
+    rows: [
+      new TableRow({
+        children: [
+          new TableCell({
+            width: { size: 50, type: WidthType.PERCENTAGE },
+            margins: { right: 400 },
+            children: [
+              title('Contact'),
+              kv('Email', v.userContact.email),
+              kv('Phone', v.userContact.phoneNumber),
+              ...(v.userContact.fax ? [kv('Fax', v.userContact.fax)] : []),
+              ...(v.userContact.linkedInUrl ? [kv('LinkedIn', v.userContact.linkedInUrl)] : []),
+            ],
+          }),
+          new TableCell({
+            width: { size: 50, type: WidthType.PERCENTAGE },
+            margins: { left: 400 },
+            children: [
+              title('Address'),
+              line(v.userAddress.address),
+              line(`${v.userAddress.city}, ${v.userAddress.state} ${v.userAddress.zipCode}`),
+              line(v.userAddress.country),
+              title('Personal'),
+              kv('DOB', v.userInfo.dob),
+              kv('Gender', v.userInfo.gender),
+            ],
+          }),
+        ],
+      }),
+    ],
+  });
+
   const doc = new Document({
     sections: [
       {
+        properties: {
+          page: { margin: { top: 1000, right: 1000, bottom: 1000, left: 1000 } }
+        },
         children: [
           new Paragraph({
-            children: [run(`${v.userInfo.firstName} ${v.userInfo.lastName}`, { bold: true, size: 32, color: '0F172A' })],
+            spacing: { after: 80 },
+            children: [run(`${v.userInfo.firstName} ${v.userInfo.lastName}`, { bold: true, size: 48, color: '0F172A' })],
           }),
           new Paragraph({
-            spacing: { after: 200 },
-            children: [run(v.userInfo.occupation || '—', { italics: true, size: 22, color: INDIGO })],
+            spacing: { after: 400 },
+            children: [run(v.userInfo.occupation || '—', { italics: true, size: 24, color: INDIGO })],
           }),
+          
+          layoutTable,
 
-          title('Contact'),
-          kv('Email', v.userContact.email),
-          kv('Phone', v.userContact.phoneNumber),
-          ...(v.userContact.fax ? [kv('Fax', v.userContact.fax)] : []),
-          ...(v.userContact.linkedInUrl ? [kv('LinkedIn', v.userContact.linkedInUrl)] : []),
-
-          title('Address'),
-          line(v.userAddress.address),
-          line(`${v.userAddress.city}, ${v.userAddress.state} ${v.userAddress.zipCode}`),
-          line(v.userAddress.country),
-
-          title('Personal'),
-          kv('DOB', v.userInfo.dob),
-          kv('Gender', v.userInfo.gender),
-
+          new Paragraph({ spacing: { before: 400 } }),
           title('Education'),
           ...education,
         ],

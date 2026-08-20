@@ -24,9 +24,9 @@ export default function ResumeTemplate({ values }: { values: UserFormValues }) {
   const initial = `${userInfo.firstName?.[0] ?? ''}${userInfo.lastName?.[0] ?? ''}`.toUpperCase();
 
   return (
-    <div className="rounded-2xl bg-slate-50 p-4 sm:p-6">
-      <div className="mx-auto max-w-3xl overflow-hidden rounded-xl bg-white shadow-lg ring-1 ring-slate-100">
-        <header className="flex items-center gap-5 border-b border-slate-100 bg-slate-50/70 px-8 py-6">
+    <div className="rounded-3xl bg-slate-50 p-2 sm:p-6">
+      <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-slate-100">
+        <header className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-5 border-b border-slate-100 bg-slate-50/70 px-4 sm:px-8 py-6">
           {userInfo.profilePhoto ? (
             <img
               src={userInfo.profilePhoto}
@@ -46,7 +46,7 @@ export default function ResumeTemplate({ values }: { values: UserFormValues }) {
           </div>
         </header>
 
-        <div className="grid grid-cols-1 gap-8 p-8 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-8 p-4 sm:p-8 md:grid-cols-2">
           <Section title="Contact">
             <ContactRow label="Email" value={userContact.email} />
             <ContactRow label="Phone" value={userContact.phoneNumber} />
@@ -70,7 +70,7 @@ export default function ResumeTemplate({ values }: { values: UserFormValues }) {
           </Section>
         </div>
 
-        <div className="border-t border-slate-100 px-8 py-6">
+        <div className="border-t border-slate-100 px-4 sm:px-8 py-6">
           <h2 className="section-title">Education</h2>
           {userAcademics.length === 0 ? (
             <p className="text-sm text-slate-400">No education records.</p>

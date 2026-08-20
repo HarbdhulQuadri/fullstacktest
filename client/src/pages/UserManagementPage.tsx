@@ -66,8 +66,35 @@ export default function UserManagementPage() {
             </Link>
           </div>
         ) : (
-          <div className="min-w-[800px]">
-            <table className="w-full text-sm">
+          <div>
+            {/* Mobile View: Cards */}
+            <div className="block md:hidden divide-y divide-slate-100">
+              {items.map((u) => (
+                <div key={u.id} className="p-4 space-y-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-medium text-slate-900">{u.firstName} {u.lastName}</p>
+                      <p className="text-sm text-slate-600">{u.contact.email}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-slate-600">Country: {u.address.country}</p>
+                  <div className="flex items-center gap-2 pt-2 border-t border-slate-50">
+                    <button onClick={() => navigate(`/admin/users/${u.id}`)} className="btn-ghost flex-1 text-xs py-1.5">
+                      <Eye className="h-4 w-4" /> View
+                    </button>
+                    <button onClick={() => navigate(`/admin/users/${u.id}/edit`)} className="btn-ghost flex-1 text-xs py-1.5">
+                      <Pencil className="h-4 w-4" /> Edit
+                    </button>
+                    <button onClick={() => setPendingDelete({ id: u.id, name: `${u.firstName} ${u.lastName}` })} className="btn-danger flex-1 text-xs py-1.5">
+                      <Trash2 className="h-4 w-4" /> Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop View: Table */}
+            <table className="hidden md:table w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50/60 text-left text-xs uppercase tracking-wider text-slate-400">
                 <th className="px-5 py-3 font-medium">Name</th>
@@ -87,14 +114,14 @@ export default function UserManagementPage() {
                   <td className="px-5 py-3">
                     <div className="flex items-center justify-end gap-1">
                       <button
-                        onClick={() => navigate(`/users/${u.id}`)}
+                        onClick={() => navigate(`/admin/users/${u.id}`)}
                         className="icon-btn"
                         title="View"
                       >
                         <Eye className="h-4 w-4" />
                       </button>
                       <button
-                        onClick={() => navigate(`/users/${u.id}/edit`)}
+                        onClick={() => navigate(`/admin/users/${u.id}/edit`)}
                         className="icon-btn"
                         title="Edit"
                       >

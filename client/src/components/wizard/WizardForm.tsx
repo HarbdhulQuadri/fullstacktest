@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { UserFormValues } from '../../features/users/types';
+import { userFormSchema } from '../../features/users/schema';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import PersonalInfoStep from './steps/PersonalInfoStep';
 import ContactStep from './steps/ContactStep';
@@ -63,6 +66,7 @@ export default function WizardForm({
   const methods = useForm<UserFormValues>({
     mode: 'onTouched',
     shouldFocusError: false,
+    resolver: zodResolver(userFormSchema),
     defaultValues: {
       ...BASE_DEFAULTS,
       ...defaultValues,
@@ -138,8 +142,8 @@ export default function WizardForm({
   };
 
   const handleSubmit = methods.handleSubmit(
-    async (data) => {
-      await onSubmit(data);
+    async (data: unknown) => {
+      await onSubmit(data as UserFormValues);
       if (storageKey) {
         try {
           sessionStorage.removeItem(storageKey);
@@ -156,13 +160,24 @@ export default function WizardForm({
       <div className="mx-auto max-w-3xl">
         <Stepper steps={steps} current={step} onStepClick={goTo} />
 
-        <form onSubmit={handleSubmit} className="card p-6 sm:p-8">
-          <div key={step} className="animate-fadeIn">
-            {step === 0 && <PersonalInfoStep />}
-            {step === 1 && <ContactStep />}
-            {step === 2 && <AddressStep />}
-            {step === 3 && <AcademicsStep />}
-            {step === 4 && <ConfirmStep />}
+        <form onSubmit={handleSubmit} className="card relative overflow-hidden bg-white/80 p-6 shadow-xl backdrop-blur-xl sm:p-10">
+          <div className="relative min-h-[400px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="absolute inset-0"
+              >
+                {step === 0 && <PersonalInfoStep />}
+                {step === 1 && <ContactStep />}
+                {step === 2 && <AddressStep />}
+                {step === 3 && <AcademicsStep />}
+                {step === 4 && <ConfirmStep />}
+              </motion.div>
+            </AnimatePresence>
           </div>
 
           <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-6">

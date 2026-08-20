@@ -30,7 +30,7 @@ export default function UserEditPage() {
     return dispatch(updateUser({ id, data }))
       .then(() => {
         notify('User updated');
-        navigate(`/users/${id}`);
+        navigate(`/admin/users/${id}`);
       })
       .catch(() => notify('Failed to update user', 'error'));
   };
