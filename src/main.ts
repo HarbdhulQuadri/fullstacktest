@@ -27,6 +27,8 @@ function resolveClientDist(): string {
 }
 
 async function bootstrap(): Promise<void> {
+  // eslint-disable-next-line no-console
+  console.log(`Starting API bootstrap (Node ENV: ${process.env.NODE_ENV})...`);
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // @react-pdf/renderer bundles a WebAssembly layout engine (Yoga) that must
