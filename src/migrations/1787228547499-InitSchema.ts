@@ -18,6 +18,12 @@ export class InitSchema1787228547499 implements MigrationInterface {
   name = 'InitSchema1787228547499';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // PostgreSQL requires the uuid-ossp extension for `uuid_generate_v4()`,
+    // which TypeORM uses as the default for PrimaryGeneratedColumn('uuid').
+    if (queryRunner.connection.options.type === 'postgres') {
+      await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
+    }
+
     await queryRunner.createTable(
       new Table({
         name: 'AdminUser',

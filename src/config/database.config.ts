@@ -29,7 +29,7 @@ export default registerAs('database', (): TypeOrmModuleOptions => {
     synchronize,
     migrationsRun,
     migrationsTableName: 'migrations',
-    migrations: [join(__dirname, 'migrations', '*.{ts,js}')],
+    migrations: [join(__dirname, '..', 'migrations', '*.{ts,js}')],
     logging,
   };
 
