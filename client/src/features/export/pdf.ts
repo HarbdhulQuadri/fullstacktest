@@ -15,7 +15,7 @@ async function renderToCanvas(
   const { default: html2canvas } = await import('html2canvas');
   if (stripImages) {
     source.querySelectorAll('img').forEach((img) => {
-      img.style.visibility = 'hidden';
+      img.style.display = 'none';
     });
   }
   return html2canvas(source, {
@@ -44,6 +44,7 @@ export async function exportUserPdf(user: User): Promise<void> {
   const { jsPDF } = await import('jspdf');
   const { createElement } = await import('react');
   const { createRoot } = await import('react-dom/client');
+  const { flushSync } = await import('react-dom');
 
   const values = userToFormValues(user);
 
@@ -55,8 +56,12 @@ export async function exportUserPdf(user: User): Promise<void> {
   host.style.background = '#ffffff';
   document.body.appendChild(host);
 
+  // React 18 render() is asynchronous; flushSync guarantees the node exists
+  // before we read host.firstElementChild below.
   const root = createRoot(host);
-  root.render(createElement(ResumeTemplate, { values }));
+  flushSync(() => {
+    root.render(createElement(ResumeTemplate, { values }));
+  });
 
   const source = host.firstElementChild as HTMLElement;
   await awaitImages(source);
