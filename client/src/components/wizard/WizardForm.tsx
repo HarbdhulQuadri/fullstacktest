@@ -125,9 +125,21 @@ export default function WizardForm({
 
   const prev = () => persistStep(Math.max(step - 1, 0));
 
-  const goTo = (i: number) => {
-    // Only allow navigating back to a previous/current step.
-    if (i <= step) persistStep(i);
+  const goTo = async (i: number) => {
+    if (i === step) return;
+    
+    // Always allow navigating backwards
+    if (i < step) {
+      persistStep(i);
+      return;
+    }
+    
+    // Validate current step before allowing forward navigation
+    const fields = stepFields[step];
+    const valid = fields.length ? await methods.trigger(fields) : true;
+    if (valid) {
+      persistStep(i);
+    }
   };
 
   const onInvalid = (errors: Record<string, unknown>) => {

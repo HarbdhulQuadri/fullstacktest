@@ -4,7 +4,7 @@ import { Check } from 'lucide-react';
 interface StepperProps {
   steps: string[];
   current: number;
-  /** Only steps at or before the current one are clickable (go back). */
+  /** Fired when any step indicator is clicked. */
   onStepClick?: (index: number) => void;
 }
 
@@ -27,7 +27,7 @@ export default function Stepper({ steps, current, onStepClick }: StepperProps) {
         {steps.map((label, i) => {
           const completed = i < current;
           const active = i === current;
-          const clickable = onStepClick && i <= current;
+          const clickable = !!onStepClick;
 
           return (
             <div key={label} className="relative z-10 flex flex-col items-center gap-2">
