@@ -51,10 +51,20 @@ export default function AcademicsStep() {
 
             <div className="grid grid-cols-2 gap-4">
               <Field label="Degree" error={itemErr?.degree}>
-                <input
+                <select
                   className={inputClassName}
                   {...register(name('degree', index))}
-                />
+                >
+                  <option value="">Select degree...</option>
+                  <option value="High School Diploma">High School Diploma</option>
+                  <option value="Associate Degree">Associate Degree</option>
+                  <option value="Bachelor's Degree">Bachelor's Degree</option>
+                  <option value="Master's Degree">Master's Degree</option>
+                  <option value="Doctorate (Ph.D.)">Doctorate (Ph.D.)</option>
+                  <option value="Professional Degree (MD, JD, etc.)">Professional Degree (MD, JD, etc.)</option>
+                  <option value="Certificate">Certificate</option>
+                  <option value="Other">Other</option>
+                </select>
               </Field>
               <Field label="Field of Study" error={itemErr?.fieldOfStudy}>
                 <input
