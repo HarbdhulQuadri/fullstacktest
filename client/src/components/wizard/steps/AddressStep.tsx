@@ -38,10 +38,25 @@ export default function AddressStep() {
 
       <div className="grid grid-cols-2 gap-4">
         <Field label="Country" required error={a?.country}>
-          <input
+          <select
             className={inputClassName}
             {...register('userAddress.country', { required: 'Country is required' })}
-          />
+          >
+            <option value="">Select country...</option>
+            <option value="United States">United States</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="Canada">Canada</option>
+            <option value="Australia">Australia</option>
+            <option value="Germany">Germany</option>
+            <option value="France">France</option>
+            <option value="Nigeria">Nigeria</option>
+            <option value="South Africa">South Africa</option>
+            <option value="India">India</option>
+            <option value="Japan">Japan</option>
+            <option value="Brazil">Brazil</option>
+            <option value="Mexico">Mexico</option>
+            <option value="Other">Other</option>
+          </select>
         </Field>
         <Field label="Zip Code" required error={a?.zipCode}>
           <input

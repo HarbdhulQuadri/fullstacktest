@@ -1,12 +1,15 @@
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, Controller } from 'react-hook-form';
 import type { UserFormValues } from '../../../features/users/types';
 import { Field, inputClassName } from '../../Field';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function ContactStep() {
   const {
     register,
+    control,
     formState: { errors },
   } = useFormContext<UserFormValues>();
 
@@ -26,11 +29,17 @@ export default function ContactStep() {
       </Field>
 
       <Field label="Phone Number" required error={errors.userContact?.phoneNumber}>
-        <input
-          className={inputClassName}
-          {...register('userContact.phoneNumber', {
-            required: 'Phone number is required',
-          })}
+        <Controller
+          name="userContact.phoneNumber"
+          control={control}
+          rules={{ required: 'Phone number is required' }}
+          render={({ field }) => (
+            <PhoneInput
+              {...field}
+              className={`${inputClassName} !p-0 [&_input]:border-none [&_input]:bg-transparent [&_input]:p-2.5 [&_input]:outline-none [&_.PhoneInputCountry]:pl-3`}
+              defaultCountry="US"
+            />
+          )}
         />
       </Field>
 
