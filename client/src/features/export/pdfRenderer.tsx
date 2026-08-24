@@ -109,11 +109,13 @@ function ResumePdf({ user }: { user: User }) {
 
             <View style={styles.col}>
               <SectionTitle>Address</SectionTitle>
-              <Text style={styles.addressText}>{v.userAddress.address}</Text>
-              <Text style={styles.addressText}>
-                {v.userAddress.city}, {v.userAddress.state} {v.userAddress.zipCode}
-              </Text>
-              <Text style={[styles.addressText, { marginBottom: 16 }]}>{v.userAddress.country}</Text>
+              <View style={{ marginBottom: 16, flexDirection: 'column' }}>
+                <Text style={styles.addressText}>{v.userAddress.address}</Text>
+                <Text style={styles.addressText}>
+                  {v.userAddress.city}, {v.userAddress.state} {v.userAddress.zipCode}
+                </Text>
+                <Text style={styles.addressText}>{v.userAddress.country}</Text>
+              </View>
 
               <SectionTitle>Personal</SectionTitle>
               <Row label="DOB" value={v.userInfo.dob} />
