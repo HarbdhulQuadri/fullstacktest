@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: 8, fontSize: 11, marginBottom: 5 },
   rowLabel: { width: 64, color: SLATE_400 },
   rowValue: { flex: 1, color: SLATE_700 },
+  addressText: { color: SLATE_700, fontSize: 11, marginBottom: 3 },
   education: { borderTopWidth: 1, borderTopColor: BORDER, padding: 28 },
   eduItem: { borderLeftWidth: 2, borderLeftColor: '#c7d2fe', paddingLeft: 12, marginBottom: 12 },
   eduSchool: { fontSize: 12, fontWeight: 'bold', color: SLATE_900 },
@@ -108,11 +109,11 @@ function ResumePdf({ user }: { user: User }) {
 
             <View style={styles.col}>
               <SectionTitle>Address</SectionTitle>
-              <Text style={[styles.rowValue, { marginBottom: 3 }]}>{v.userAddress.address}</Text>
-              <Text style={[styles.rowValue, { marginBottom: 3 }]}>
+              <Text style={styles.addressText}>{v.userAddress.address}</Text>
+              <Text style={styles.addressText}>
                 {v.userAddress.city}, {v.userAddress.state} {v.userAddress.zipCode}
               </Text>
-              <Text style={styles.rowValue}>{v.userAddress.country}</Text>
+              <Text style={[styles.addressText, { marginBottom: 16 }]}>{v.userAddress.country}</Text>
 
               <SectionTitle>Personal</SectionTitle>
               <Row label="DOB" value={v.userInfo.dob} />
