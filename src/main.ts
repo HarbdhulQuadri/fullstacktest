@@ -3,6 +3,7 @@ import helmet from 'helmet';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe, HttpStatus } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Request, Response, NextFunction } from 'express';
 import { AppModule } from './app.module';
 import { join } from 'path';
@@ -40,13 +41,23 @@ async function bootstrap(): Promise<void> {
       contentSecurityPolicy: {
         useDefaults: true,
         directives: {
-          scriptSrc: ["'self'", "'wasm-unsafe-eval'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
+          scriptSrc: ["'self'", "'wasm-unsafe-eval'", "'unsafe-inline'"],
+          imgSrc: ["'self'", 'data:', 'https:', "validator.swagger.io"],
         },
       },
     }),
   );
   app.setGlobalPrefix('api');
+
+  // Swagger Documentation Setup
+  const config = new DocumentBuilder()
+    .setTitle('User Manager API')
+    .setDescription('The API documentation for the User Management assessment')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
 
   app.enableCors({
     origin: resolveCorsOrigins(),
