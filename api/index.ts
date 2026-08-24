@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { ValidationPipe, HttpStatus } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import express from 'express';
 
@@ -18,13 +19,30 @@ async function bootstrap() {
         contentSecurityPolicy: {
           useDefaults: true,
           directives: {
-            scriptSrc: ["'self'", "'wasm-unsafe-eval'"],
-            imgSrc: ["'self'", 'data:', 'https:'],
+            scriptSrc: ["'self'", "'wasm-unsafe-eval'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+            imgSrc: ["'self'", 'data:', 'https:', "validator.swagger.io"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
           },
         },
       }),
     );
     app.setGlobalPrefix('api');
+
+    const config = new DocumentBuilder()
+      .setTitle('User Manager API')
+      .setDescription('The core API documentation for the User Management platform')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document, {
+      customCssUrl:
+        'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui.min.css',
+      customJs: [
+        'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-bundle.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-standalone-preset.js',
+      ],
+    });
     
     // Enable CORS for frontend communication
     app.enableCors({
