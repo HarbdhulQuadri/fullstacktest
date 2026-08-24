@@ -172,16 +172,16 @@ export default function WizardForm({
       <div className="mx-auto max-w-3xl">
         <Stepper steps={steps} current={step} onStepClick={goTo} />
 
-        <form onSubmit={handleSubmit} className="card relative overflow-hidden bg-white/80 p-6 shadow-xl backdrop-blur-xl sm:p-10">
-          <div className="relative min-h-[400px]">
+        <form onSubmit={handleSubmit} className="card relative overflow-hidden bg-white/80 p-5 shadow-xl backdrop-blur-xl sm:p-6">
+          <div className="relative">
             <AnimatePresence mode="wait">
               <motion.div
                 key={step}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3, ease: 'easeInOut' }}
-                className="absolute inset-0"
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+                className="w-full"
               >
                 {step === 0 && <PersonalInfoStep />}
                 {step === 1 && <ContactStep />}
@@ -192,7 +192,7 @@ export default function WizardForm({
             </AnimatePresence>
           </div>
 
-          <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-6">
+          <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-5">
             <button
               type="button"
               onClick={prev}

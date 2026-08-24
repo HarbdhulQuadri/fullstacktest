@@ -15,7 +15,7 @@ export function Field({
   required?: boolean;
 }) {
   return (
-    <div className="mb-4">
+    <div className="mb-3">
       <label className="mb-1 block text-sm font-medium text-slate-700">
         {label}
         {required && <span className="text-rose-600"> *</span>}
