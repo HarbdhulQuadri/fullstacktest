@@ -25,7 +25,7 @@ export default function Layout() {
   return (
     <div className="min-h-screen bg-slate-50">
         <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+          <div className="mx-auto flex max-w-6xl flex-col gap-4 sm:flex-row items-center justify-between px-4 py-3">
             <Link to="/admin" className="flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
                 <Users className="h-4 w-4" />
@@ -34,15 +34,16 @@ export default function Layout() {
                 Admin Panel
               </span>
             </Link>
-            <nav className="flex items-center gap-1">
+            <nav className="flex flex-wrap items-center justify-center gap-2">
               <NavLink to="/admin" className={navLinkClass} end>
                 Dashboard
               </NavLink>
               <NavLink to="/admin/users" className={navLinkClass}>
                 Manage Users
               </NavLink>
-              <Link to="/" className="btn-primary ml-2 border-transparent bg-slate-800 text-white hover:bg-slate-900">
-                View Public Form
+              <Link to="/" className="btn-primary ml-1 sm:ml-2 border-transparent bg-slate-800 text-white hover:bg-slate-900 px-3">
+                <span className="hidden sm:inline">View Public Form</span>
+                <span className="sm:hidden">Form</span>
               </Link>
               {email && (
                 <span className="ml-3 hidden text-sm text-slate-500 sm:inline">
