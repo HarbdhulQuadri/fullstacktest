@@ -49,7 +49,7 @@ export default function AcademicsStep() {
               />
             </Field>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field label="Degree" error={itemErr?.degree}>
                 <select
                   className={inputClassName}
@@ -74,7 +74,7 @@ export default function AcademicsStep() {
               </Field>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field label="Start Date" error={itemErr?.startDate}>
                 <input
                   type="date"

@@ -33,7 +33,7 @@ export default function PersonalInfoStep() {
         </div>
       </Field>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="First Name" required error={errors.userInfo?.firstName}>
           <input
             className={inputClassName}
@@ -54,7 +54,7 @@ export default function PersonalInfoStep() {
         </Field>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Date of Birth" required error={errors.userInfo?.dob}>
           <input
             type="date"

@@ -21,7 +21,7 @@ export default function AddressStep() {
         />
       </Field>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="City" required error={a?.city}>
           <input
             className={inputClassName}
@@ -36,7 +36,7 @@ export default function AddressStep() {
         </Field>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Country" required error={a?.country}>
           <select
             className={inputClassName}
