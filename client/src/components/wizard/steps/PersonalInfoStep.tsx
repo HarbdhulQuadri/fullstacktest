@@ -5,6 +5,7 @@ import { Field, inputClassName } from '../../Field';
 export default function PersonalInfoStep() {
   const {
     register,
+    watch,
     formState: { errors },
   } = useFormContext<UserFormValues>();
 
@@ -13,12 +14,23 @@ export default function PersonalInfoStep() {
       <h2 className="text-lg font-semibold mb-4">Personal Information</h2>
 
       <Field label="Profile Photo URL" error={errors.userInfo?.profilePhoto}>
-        <input
-          type="url"
-          className={inputClassName}
-          placeholder="https://..."
-          {...register('userInfo.profilePhoto')}
-        />
+        <div className="flex items-center gap-4">
+          <input
+            type="url"
+            className={`${inputClassName} flex-1`}
+            placeholder="https://example.com/photo.jpg"
+            {...register('userInfo.profilePhoto')}
+          />
+          {watch('userInfo.profilePhoto') && (
+            <img 
+              src={watch('userInfo.profilePhoto') || undefined} 
+              alt="Preview" 
+              className="w-10 h-10 rounded-full object-cover border border-slate-200 bg-slate-100"
+              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+              onLoad={(e) => { e.currentTarget.style.display = 'block'; }}
+            />
+          )}
+        </div>
       </Field>
 
       <div className="grid grid-cols-2 gap-4">

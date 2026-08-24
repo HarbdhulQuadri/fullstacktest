@@ -32,12 +32,16 @@ export default function ResumeTemplate({ values }: { values: UserFormValues }) {
               src={userInfo.profilePhoto}
               alt=""
               className="h-20 w-20 rounded-2xl object-cover ring-2 ring-indigo-100"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                e.currentTarget.nextElementSibling?.classList.add('flex');
+              }}
             />
-          ) : (
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-indigo-50 text-2xl font-semibold text-indigo-600">
-              {initial}
-            </div>
-          )}
+          ) : null}
+          <div className={`h-20 w-20 items-center justify-center rounded-2xl bg-indigo-50 text-2xl font-semibold text-indigo-600 ${userInfo.profilePhoto ? 'hidden' : 'flex'}`}>
+            {initial}
+          </div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">
               {userInfo.firstName} {userInfo.lastName}
