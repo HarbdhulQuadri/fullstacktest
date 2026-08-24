@@ -29,7 +29,7 @@ export default function UserCreatePage() {
       <div className="flex justify-end p-4 sm:absolute sm:top-4 sm:right-4 z-50">
         <Link to="/admin" className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 sm:px-5 sm:py-2.5 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-inset ring-slate-200 hover:bg-indigo-50 hover:text-indigo-700 hover:ring-indigo-200 transition-all">
           <Shield className="h-4 w-4 text-indigo-500" />
-          <span className="hidden sm:inline">Assessor: Admin Dashboard</span>
+          <span className="hidden sm:inline">Admin Dashboard</span>
           <span className="sm:hidden">Admin</span>
         </Link>
       </div>

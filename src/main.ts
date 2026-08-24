@@ -52,7 +52,7 @@ async function bootstrap(): Promise<void> {
   // Swagger Documentation Setup
   const config = new DocumentBuilder()
     .setTitle('User Manager API')
-    .setDescription('The API documentation for the User Management assessment')
+    .setDescription('The core API documentation for the User Management platform')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
