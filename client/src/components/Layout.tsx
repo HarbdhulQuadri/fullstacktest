@@ -26,24 +26,23 @@ export default function Layout() {
     <div className="min-h-screen bg-slate-50">
         <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-            <Link to="/users" className="flex items-center gap-2">
+            <Link to="/admin" className="flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
                 <Users className="h-4 w-4" />
               </span>
               <span className="text-lg font-semibold tracking-tight text-slate-900">
-                UserManager
+                Admin Panel
               </span>
             </Link>
             <nav className="flex items-center gap-1">
-              <NavLink to="/users" className={navLinkClass} end>
-                Users
+              <NavLink to="/admin" className={navLinkClass} end>
+                Dashboard
               </NavLink>
-              <NavLink to="/admin" className={navLinkClass}>
-                Admin
+              <NavLink to="/admin/users" className={navLinkClass}>
+                Manage Users
               </NavLink>
-              <Link to="/users/new" className="btn-primary ml-2">
-                <UserPlus className="h-4 w-4" />
-                New User
+              <Link to="/" className="btn-primary ml-2 border-transparent bg-slate-800 text-white hover:bg-slate-900">
+                View Public Form
               </Link>
               {email && (
                 <span className="ml-3 hidden text-sm text-slate-500 sm:inline">
