@@ -18,6 +18,14 @@
   ],
   "rewrites": [
     {
+      "source": "/api/docs/swagger-ui(.*)",
+      "destination": "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui$1"
+    },
+    {
+      "source": "/api/docs/favicon(.*)",
+      "destination": "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/favicon$1"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/index.ts"
     },
