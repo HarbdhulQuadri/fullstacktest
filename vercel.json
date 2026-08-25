@@ -38,7 +38,7 @@
       "destination": "/api/index.ts"
     },
     {
-      "source": "/(.*)",
+      "source": "/(?!api/)(.*)",
       "has": [
         {
           "type": "header",
