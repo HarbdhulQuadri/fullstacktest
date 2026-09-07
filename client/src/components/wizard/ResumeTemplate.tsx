@@ -72,6 +72,7 @@ export default function ResumeTemplate({ values }: { values: UserFormValues }) {
             <ContactRow label="DOB" value={userInfo.dob} />
             <ContactRow label="Gender" value={userInfo.gender} />
             {userInfo.maidenName && <ContactRow label="Maiden" value={userInfo.maidenName} />}
+            {userInfo.citizenship && <ContactRow label="Citizenship" value={userInfo.citizenship} />}
           </Section>
         </div>
 

@@ -4,6 +4,7 @@ import { join } from 'path';
 import { InitSchema1787228547499 } from '../migrations/1787228547499-InitSchema';
 import { AddTimestampDefaults1787229000000 } from '../migrations/1787229000000-AddTimestampDefaults';
 import { Migration1788784850379 } from '../migrations/1788784850379-Migration';
+import { AddCitizenship1788785000000 } from '../migrations/1788785000000-AddCitizenship';
 
 const environment = (process.env.NODE_ENV || 'development').toLowerCase();
 const isProd = environment === 'production';
@@ -32,7 +33,12 @@ export default registerAs('database', (): TypeOrmModuleOptions => {
     synchronize,
     migrationsRun,
     migrationsTableName: 'migrations',
-    migrations: [InitSchema1787228547499, AddTimestampDefaults1787229000000, Migration1788784850379],
+    migrations: [
+      InitSchema1787228547499,
+      AddTimestampDefaults1787229000000,
+      Migration1788784850379,
+      AddCitizenship1788785000000,
+    ],
     logging,
   };
 

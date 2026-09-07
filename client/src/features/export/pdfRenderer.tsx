@@ -121,6 +121,7 @@ function ResumePdf({ user }: { user: User }) {
               <Row label="DOB" value={v.userInfo.dob} />
               <Row label="Gender" value={v.userInfo.gender} />
               {v.userInfo.maidenName && <Row label="Maiden" value={v.userInfo.maidenName} />}
+              {v.userInfo.citizenship && <Row label="Citizenship" value={v.userInfo.citizenship} />}
             </View>
           </View>
 

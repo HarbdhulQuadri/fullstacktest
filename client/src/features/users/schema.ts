@@ -14,6 +14,7 @@ export const userInfoSchema = z
     occupation: z.string().max(100, 'Occupation is too long').optional().or(z.literal('')).nullable(),
     gender: z.string().min(1, 'Please select a gender').max(20, 'Gender is too long'),
     maidenName: z.string().max(100, 'Maiden name is too long').optional().or(z.literal('')).nullable(),
+    citizenship: z.string().min(1, 'Please select your citizenship').max(100, 'Citizenship is too long'),
   })
   .superRefine((data, ctx) => {
     if (data.gender === 'female' && (!data.maidenName || data.maidenName.trim().length === 0)) {

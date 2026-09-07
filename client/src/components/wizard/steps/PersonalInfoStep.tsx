@@ -99,14 +99,26 @@ export default function PersonalInfoStep() {
         />
       </Field>
 
-       <Field label="Citizenship" error={errors.userInfo?.citizenship}>
-        <input
+      <Field label="Citizenship" required error={errors.userInfo?.citizenship}>
+        <select
           className={inputClassName}
-          {...register('userInfo.citizenship', {
-            maxLength: { value: 100, message: 'Max 100 characters' },
-            required: 'Citizenship is required',
-          })}
-        />
+          {...register('userInfo.citizenship', { required: 'Citizenship is required' })}
+        >
+          <option value="">Select country...</option>
+          <option value="United States">United States</option>
+          <option value="United Kingdom">United Kingdom</option>
+          <option value="Canada">Canada</option>
+          <option value="Australia">Australia</option>
+          <option value="Germany">Germany</option>
+          <option value="France">France</option>
+          <option value="Nigeria">Nigeria</option>
+          <option value="South Africa">South Africa</option>
+          <option value="India">India</option>
+          <option value="Japan">Japan</option>
+          <option value="Brazil">Brazil</option>
+          <option value="Mexico">Mexico</option>
+          <option value="Other">Other</option>
+        </select>
       </Field>
 
       </div>

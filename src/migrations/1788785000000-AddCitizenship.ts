@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner, TableColumn } from "typeorm";
 
-export class Migration1788784850379 implements MigrationInterface {
-    name = 'Migration1788784850379'
+export class AddCitizenship1788785000000 implements MigrationInterface {
+    name = 'AddCitizenship1788785000000';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         const hasColumn = await queryRunner.hasColumn('UserInfoTB', 'citizenship');

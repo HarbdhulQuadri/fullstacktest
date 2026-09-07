@@ -12,6 +12,8 @@ const validPayload = {
     lastName: 'Lovelace',
     dob: '1990-12-10',
     gender: 'female',
+    maidenName: 'Byron',
+    citizenship: 'United Kingdom',
     occupation: 'Engineer',
   },
   userContact: {
@@ -126,6 +128,26 @@ describe('Users API (e2e)', () => {
     expect(res.body.code).toBe('HTTP_422');
     expect(typeof res.body.message).toBe('string');
     expect(typeof res.body.timestamp).toBe('string');
+  });
+
+  it('rejects female user registration without maiden name with 422', async () => {
+    const invalidFemale = {
+      ...validPayload,
+      userInfo: {
+        ...validPayload.userInfo,
+        gender: 'female',
+        maidenName: undefined,
+      },
+    };
+
+    const res = await request(app.getHttpServer())
+      .post('/api/users')
+      .set(authed())
+      .send(invalidFemale)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY);
+
+    expect(res.body.error).toBe(true);
+    expect(res.body.code).toBe('HTTP_422');
   });
 
   it('does not create an orphan UserInfoTB when validation fails', async () => {
