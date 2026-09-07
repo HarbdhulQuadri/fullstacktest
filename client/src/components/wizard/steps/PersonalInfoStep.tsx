@@ -84,6 +84,18 @@ export default function PersonalInfoStep() {
           })}
         />
       </Field>
+
+      {watch('userInfo.gender') === 'female' && (
+        <Field label="Maiden Name (Optional)" error={errors.userInfo?.maidenName}>
+          <input
+            className={inputClassName}
+            placeholder="E.g. Smith"
+            {...register('userInfo.maidenName', {
+              maxLength: { value: 100, message: 'Max 100 characters' },
+            })}
+          />
+        </Field>
+      )}
     </div>
   );
 }

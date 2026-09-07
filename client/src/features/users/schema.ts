@@ -12,6 +12,7 @@ export const userInfoSchema = z.object({
   }, 'Must be a valid past date'),
   occupation: z.string().max(100, 'Occupation is too long').optional().or(z.literal('')).nullable(),
   gender: z.string().min(1, 'Please select a gender').max(20, 'Gender is too long'),
+  maidenName: z.string().max(100, 'Maiden name is too long').optional().or(z.literal('')).nullable(),
 });
 
 export const userContactSchema = z.object({

@@ -110,6 +110,7 @@ export async function exportUserDocx(user: User): Promise<void> {
               title('Personal'),
               kv('DOB', v.userInfo.dob),
               kv('Gender', v.userInfo.gender),
+              ...(v.userInfo.maidenName ? [kv('Maiden', v.userInfo.maidenName)] : []),
             ],
           }),
         ],

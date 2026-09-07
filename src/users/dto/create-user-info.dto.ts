@@ -28,4 +28,9 @@ export class CreateUserInfoDto {
   @IsString()
   @MaxLength(20)
   gender: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  maidenName?: string | null;
 }

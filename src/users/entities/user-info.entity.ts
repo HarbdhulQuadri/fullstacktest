@@ -35,6 +35,9 @@ export class UserInfoTB {
   @Column({ type: 'varchar', length: 20 })
   gender: string;
 
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  maidenName: string | null;
+
   @OneToOne(() => UserContactTB, (contact) => contact.user, {
     cascade: true,
   })
