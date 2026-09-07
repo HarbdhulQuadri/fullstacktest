@@ -1,4 +1,4 @@
-import { IsDateString, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsString, MaxLength, ValidateIf } from 'class-validator';
 
 export class CreateUserInfoDto {
   @IsOptional()
@@ -29,7 +29,12 @@ export class CreateUserInfoDto {
   @MaxLength(20)
   gender: string;
 
-  @IsOptional()
+  @ValidateIf(
+    (o: CreateUserInfoDto) =>
+      o.gender?.toLowerCase() === 'female' ||
+      (o.maidenName !== null && o.maidenName !== undefined && o.maidenName !== ''),
+  )
+  @IsNotEmpty({ message: 'Maiden name is required for female users' })
   @IsString()
   @MaxLength(100)
   maidenName?: string | null;

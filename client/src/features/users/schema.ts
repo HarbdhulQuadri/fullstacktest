@@ -2,18 +2,28 @@ import { z } from 'zod';
 
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
-export const userInfoSchema = z.object({
-  profilePhoto: z.string().url('Must be a valid URL').optional().or(z.literal('')).nullable(),
-  firstName: z.string().min(2, 'First name must be at least 2 characters').max(100, 'First name is too long'),
-  lastName: z.string().min(2, 'Last name must be at least 2 characters').max(100, 'Last name is too long'),
-  dob: z.string().regex(dateRegex, 'Date of birth must be YYYY-MM-DD').refine((date) => {
-    const d = new Date(date);
-    return d instanceof Date && !isNaN(d.getTime()) && d < new Date();
-  }, 'Must be a valid past date'),
-  occupation: z.string().max(100, 'Occupation is too long').optional().or(z.literal('')).nullable(),
-  gender: z.string().min(1, 'Please select a gender').max(20, 'Gender is too long'),
-  maidenName: z.string().max(100, 'Maiden name is too long').optional().or(z.literal('')).nullable(),
-});
+export const userInfoSchema = z
+  .object({
+    profilePhoto: z.string().url('Must be a valid URL').optional().or(z.literal('')).nullable(),
+    firstName: z.string().min(2, 'First name must be at least 2 characters').max(100, 'First name is too long'),
+    lastName: z.string().min(2, 'Last name must be at least 2 characters').max(100, 'Last name is too long'),
+    dob: z.string().regex(dateRegex, 'Date of birth must be YYYY-MM-DD').refine((date) => {
+      const d = new Date(date);
+      return d instanceof Date && !isNaN(d.getTime()) && d < new Date();
+    }, 'Must be a valid past date'),
+    occupation: z.string().max(100, 'Occupation is too long').optional().or(z.literal('')).nullable(),
+    gender: z.string().min(1, 'Please select a gender').max(20, 'Gender is too long'),
+    maidenName: z.string().max(100, 'Maiden name is too long').optional().or(z.literal('')).nullable(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.gender === 'female' && (!data.maidenName || data.maidenName.trim().length === 0)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Maiden name is required for female users',
+        path: ['maidenName'],
+      });
+    }
+  });
 
 export const userContactSchema = z.object({
   email: z.string().email('Must be a valid email address'),
