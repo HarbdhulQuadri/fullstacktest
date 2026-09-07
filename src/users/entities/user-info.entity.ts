@@ -38,6 +38,8 @@ export class UserInfoTB {
   @Column({ type: 'varchar', length: 100, nullable: true })
   maidenName: string | null;
 
+    @Column({ type: 'varchar', length: 100, nullable: true })
+  citizenship: string | null;
   @OneToOne(() => UserContactTB, (contact) => contact.user, {
     cascade: true,
   })

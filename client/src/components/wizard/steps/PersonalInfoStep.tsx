@@ -99,6 +99,16 @@ export default function PersonalInfoStep() {
         />
       </Field>
 
+       <Field label="Citizenship" error={errors.userInfo?.citizenship}>
+        <input
+          className={inputClassName}
+          {...register('userInfo.citizenship', {
+            maxLength: { value: 100, message: 'Max 100 characters' },
+            required: 'Citizenship is required',
+          })}
+        />
+      </Field>
+
       </div>
   );
 }

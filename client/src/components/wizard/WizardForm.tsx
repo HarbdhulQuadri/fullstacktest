@@ -24,7 +24,7 @@ const stepFields: Array<Array<keyof UserFormValues>> = [
 ];
 
 const BASE_DEFAULTS: UserFormValues = {
-  userInfo: { firstName: '', lastName: '', dob: '', gender: '', maidenName: '' },
+  userInfo: { firstName: '', lastName: '', dob: '', gender: '', maidenName: '', citizenship: '', },
   userContact: { email: '', phoneNumber: '' },
   userAddress: { address: '', city: '', state: '', country: '', zipCode: '' },
   userAcademics: [],

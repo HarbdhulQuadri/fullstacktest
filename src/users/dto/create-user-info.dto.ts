@@ -29,6 +29,12 @@ export class CreateUserInfoDto {
   @MaxLength(20)
   gender: string;
 
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  citizenship: string;
+
   @ValidateIf(
     (o: CreateUserInfoDto) =>
       o.gender?.toLowerCase() === 'female' ||

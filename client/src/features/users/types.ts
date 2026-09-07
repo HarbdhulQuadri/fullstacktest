@@ -6,6 +6,7 @@ export interface UserInfo {
   occupation?: string | null;
   gender: string;
   maidenName?: string | null;
+  citizenship?: string | null;
 }
 
 export interface UserContact {
@@ -50,6 +51,7 @@ export interface User {
   occupation?: string | null;
   gender: string;
   maidenName?: string | null;
+  citizenship?: string | null;
   contact: UserContact & { id: string };
   address: UserAddress & { id: string };
   academics: Array<UserAcademic & { id: string }>;
@@ -77,6 +79,7 @@ export function toApiPayload(values: UserFormValues): UserFormValuesPayload {
       profilePhoto: emptyToNull(values.userInfo.profilePhoto),
       occupation: emptyToNull(values.userInfo.occupation),
       maidenName: emptyToNull(values.userInfo.maidenName),
+      citizenship: emptyToNull(values.userInfo.citizenship),
     },
     userContact: {
       ...values.userContact,
