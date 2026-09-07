@@ -74,18 +74,7 @@ export default function PersonalInfoStep() {
             <option value="prefer_not_to_say">Prefer not to say</option>
           </select>
         </Field>
-      </div>
-
-      <Field label="Occupation" error={errors.userInfo?.occupation}>
-        <input
-          className={inputClassName}
-          {...register('userInfo.occupation', {
-            maxLength: { value: 100, message: 'Max 100 characters' },
-          })}
-        />
-      </Field>
-
-      {watch('userInfo.gender') === 'female' && (
+        {watch('userInfo.gender') === 'female' && (
         <Field label="Maiden Name" required error={errors.userInfo?.maidenName}>
           <input
             className={inputClassName}
@@ -97,6 +86,19 @@ export default function PersonalInfoStep() {
           />
         </Field>
       )}
-    </div>
+    
+      </div>
+
+
+      <Field label="Occupation" error={errors.userInfo?.occupation}>
+        <input
+          className={inputClassName}
+          {...register('userInfo.occupation', {
+            maxLength: { value: 100, message: 'Max 100 characters' },
+          })}
+        />
+      </Field>
+
+      </div>
   );
 }
